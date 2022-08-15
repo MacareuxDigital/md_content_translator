@@ -39,11 +39,11 @@ if (isset($request)) {
                     ?>
                     <tr>
                         <th class="col-1" scope="row"><?= $content->getLabel() ?></th>
-                        <td class="col-5"><?= htmLawed($content->getContent()) ?></td>
+                        <td class="col-5"><?= LinkAbstractor::translateFrom($content->getContent()) ?></td>
                         <td class="col-5">
                             <div class="readonly-editor-content"
                                  data-edit-translate-placeholder="translate_<?= $content->getId() ?>">
-                                <?= $content->getTranslated() ?>
+                                <?= LinkAbstractor::translateFrom($content->getTranslated()) ?>
                             </div>
                             <div class="editor-content d-none"
                                  data-edit-translate-target="translate_<?= $content->getId() ?>">
