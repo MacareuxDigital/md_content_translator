@@ -1,4 +1,4 @@
-# Macareux Content Translator
+# Concrete CMS add-on: Macareux Content Translator
 
 Concrete CMS has powerful features to manage multilingual content by 
 its default. You can add language sections in your sitemap and connect 
