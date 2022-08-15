@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<concrete5-cif version="1.0">
+    <permissionkeys>
+        <permissionkey handle="translate_page_contents" name="Translate Page Contents" description=""
+                       package="md_content_translator" category="page">
+        </permissionkey>
+    </permissionkeys>
+</concrete5-cif>

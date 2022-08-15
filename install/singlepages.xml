@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<concrete5-cif version="1.0">
+    <singlepages>
+        <page name="Translate"
+              path="/dashboard/content_translator"
+              filename="/dashboard/content_translator/view.php"
+              pagetype=""
+              description=""
+              package="md_content_translator"/>
+        <page name="Requests"
+              path="/dashboard/content_translator/search"
+              filename="/dashboard/content_translator/search.php"
+              pagetype=""
+              description=""
+              package="md_content_translator"/>
+        <page name="Edit Translate Request"
+              path="/dashboard/content_translator/detail"
+              filename="/dashboard/content_translator/detail.php"
+              pagetype=""
+              description=""
+              package="md_content_translator">
+            <attributes>
+                <attributekey handle="exclude_nav">
+                    <value>1</value>
+                </attributekey>
+            </attributes>
+        </page>
+        <page name="Translator"
+              path="/dashboard/content_translator/translator"
+              filename="/dashboard/content_translator/translator.php"
+              pagetype=""
+              description=""
+              package="md_content_translator"/>
+    </singlepages>
+</concrete5-cif>
