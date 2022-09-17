@@ -62,8 +62,10 @@ class Extractor
         /** @var ExtractPagePropertyRoutineInterface $routine */
         foreach ($this->manager->getRoutinesByCategory('page_property') as $routine) {
             $content = $routine->getContent($request, $this->page);
-            $request->getContents()->add($content);
-            $this->entityManager->persist($content);
+            if ($content) {
+                $request->getContents()->add($content);
+                $this->entityManager->persist($content);
+            }
         }
 
         foreach ($this->page->getSetCollectionAttributes() as $attribute) {

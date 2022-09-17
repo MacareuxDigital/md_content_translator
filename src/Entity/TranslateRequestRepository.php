@@ -2,8 +2,8 @@
 
 namespace Macareux\ContentTranslator\Entity;
 
-use Concrete\Core\Entity\Express\EntityRepository;
 use Concrete\Core\Page\Collection\Collection;
+use Doctrine\ORM\EntityRepository;
 
 class TranslateRequestRepository extends EntityRepository
 {

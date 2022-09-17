@@ -11,8 +11,10 @@ defined('C5_EXECUTE') or die('Access Denied.');
 /** @var \Concrete\Core\Validation\CSRF\Token $token */
 /** @var \Concrete\Core\Editor\EditorInterface $editor */
 /** @var \Macareux\ContentTranslator\Entity\TranslateRequest $request */
+/** @var \Macareux\ContentTranslator\Glossary\GlossaryService $service */
 $canPublish = $canPublish ?? false;
 $translators = $translators ?? [];
+
 if (isset($request)) {
     if (count($translators) > 1) {
         ?>
@@ -35,12 +37,17 @@ if (isset($request)) {
             <tbody>
             <?php
             foreach ($request->getContents() as $content) {
+                $contentText = $content->getContent();
+                $glossaryTerms = $service->getTermsFromContent($contentText, $request);
+                $rowStyle = $glossaryTerms ? ' style="border-bottom: 0px;"' : '';
                 if ($content->getType() === TranslateContent::TYPE_HTML) {
                     ?>
                     <tr>
-                        <th class="col-1" scope="row"><?= $content->getLabel() ?></th>
-                        <td class="col-5"><?= LinkAbstractor::translateFrom($content->getContent()) ?></td>
-                        <td class="col-5">
+                        <th class="col-1" scope="row"<?= $rowStyle ?>><?= $content->getLabel() ?></th>
+                        <td class="col-5"<?= $rowStyle ?>>
+                            <?= LinkAbstractor::translateFrom($contentText) ?>
+                        </td>
+                        <td class="col-5"<?= $rowStyle ?>>
                             <div class="readonly-editor-content"
                                  data-edit-translate-placeholder="translate_<?= $content->getId() ?>">
                                 <?= LinkAbstractor::translateFrom($content->getTranslated()) ?>
@@ -50,7 +57,7 @@ if (isset($request)) {
                                 <?= $editor->outputStandardEditor('translate_' . $content->getId(), LinkAbstractor::translateFromEditMode($content->getTranslated())) ?>
                             </div>
                         </td>
-                        <td class="col-1">
+                        <td class="col-1"<?= $rowStyle ?>>
                             <button type="button" class="btn btn-primary"
                                     data-edit-translate-editor="translate_<?= $content->getId() ?>">
                                 <i class="fas fa-edit"></i>
@@ -61,12 +68,12 @@ if (isset($request)) {
                 } elseif ($content->getType() === TranslateContent::TYPE_TEXT) {
                     ?>
                     <tr>
-                        <th class="col-1" scope="row"><?= $content->getLabel() ?></th>
-                        <td class="col-5"><?= nl2br($content->getContent()) ?></td>
-                        <td class="col-5">
+                        <th class="col-1" scope="row"<?= $rowStyle ?>><?= $content->getLabel() ?></th>
+                        <td class="col-5"<?= $rowStyle ?>><?= nl2br(h($contentText)) ?></td>
+                        <td class="col-5"<?= $rowStyle ?>>
                             <?= $form->textarea('translate_' . $content->getId(), $content->getTranslated(), ['readonly' => true]) ?>
                         </td>
-                        <td class="col-1">
+                        <td class="col-1"<?= $rowStyle ?>>
                             <button type="button" class="btn btn-primary"
                                     data-edit-translate="translate_<?= $content->getId() ?>">
                                 <i class="fas fa-edit"></i>
@@ -77,17 +84,35 @@ if (isset($request)) {
                 } else {
                     ?>
                     <tr>
-                        <th class="col-1" scope="row"><?= $content->getLabel() ?></th>
-                        <td class="col-5"><?= $content->getContent() ?></td>
-                        <td class="col-5">
+                        <th class="col-1" scope="row"<?= $rowStyle ?>><?= $content->getLabel() ?></th>
+                        <td class="col-5"<?= $rowStyle ?>><?= h($contentText) ?></td>
+                        <td class="col-5"<?= $rowStyle ?>>
                             <?= $form->text('translate_' . $content->getId(), $content->getTranslated(), ['readonly' => true]) ?>
                         </td>
-                        <td class="col-1">
+                        <td class="col-1"<?= $rowStyle ?>>
                             <button type="button" class="btn btn-primary"
                                     data-edit-translate="translate_<?= $content->getId() ?>">
                                 <i class="fas fa-edit"></i>
                             </button>
                         </td>
+                    </tr>
+                    <?php
+                }
+                if ($glossaryTerms) {
+                    ?>
+                    <tr>
+                        <td class="col-1"></td>
+                        <td class="col-5">
+                            <?php foreach ($glossaryTerms as $source => $translated) { ?>
+                                <span class="badge text-bg-primary"><?= h($source) ?></span>
+                            <?php } ?>
+                        </td>
+                        <td class="col-5">
+                            <?php foreach ($glossaryTerms as $source => $translated) { ?>
+                                <button type="button" class="btn btn-primary btn-sm copy-text" data-bs-toggle="tooltip" data-bs-title="<?= h('Copied to clipboard!') ?>" data-bs-trigger="manual"><?= h($translated) ?></button>
+                            <?php } ?>
+                        </td>
+                        <td class="col-1"></td>
                     </tr>
                     <?php
                 }

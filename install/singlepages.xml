@@ -31,5 +31,11 @@
               pagetype=""
               description=""
               package="md_content_translator"/>
+        <page name="Glossary"
+              path="/dashboard/content_translator/glossary"
+              filename="/dashboard/content_translator/glossary.php"
+              pagetype=""
+              description=""
+              package="md_content_translator"/>
     </singlepages>
 </concrete5-cif>

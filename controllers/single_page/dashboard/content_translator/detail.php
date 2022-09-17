@@ -9,6 +9,7 @@ use Concrete\Core\Permission\Checker;
 use Concrete\Core\Url\Resolver\Manager\ResolverManagerInterface;
 use Macareux\ContentTranslator\Entity\TranslateContent;
 use Macareux\ContentTranslator\Entity\TranslateRequest;
+use Macareux\ContentTranslator\Glossary\GlossaryService;
 use Macareux\ContentTranslator\Publisher\Publisher;
 use Macareux\ContentTranslator\Translator\Manager;
 use Macareux\ContentTranslator\Translator\TranslatorInterface;
@@ -32,6 +33,9 @@ class Detail extends DashboardPageController
                 $translators[$translator->getHandle()] = $translator->getName();
             }
             $this->set('translators', $translators);
+            $this->set('service', $this->app->make(GlossaryService::class));
+
+            $this->requireAsset('translator_clipboard');
         }
     }
 
@@ -55,7 +59,7 @@ class Detail extends DashboardPageController
                             $content->setStatus(TranslateContent::STATUS_TRANSLATED);
                             $this->entityManager->persist($content);
                         }
-                    } elseif ($content->getStatus() !== TranslateContent::STATUS_DRAFT) {
+                    } else {
                         $content->clearTranslated();
                         $content->setStatus(TranslateContent::STATUS_DRAFT);
                         $this->entityManager->persist($content);

@@ -2,7 +2,7 @@
 
 namespace Macareux\ContentTranslator\Entity;
 
-use Concrete\Core\Entity\Express\EntityRepository;
+use Doctrine\ORM\EntityRepository;
 
 class TranslatorRepository extends EntityRepository
 {

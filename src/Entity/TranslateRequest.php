@@ -37,19 +37,19 @@ class TranslateRequest
 
     /**
      * @var string
-     * @ORM\Column(type="string")
+     * @ORM\Column(type="string", length=5)
      */
     protected $source_language = '';
 
     /**
      * @var string
-     * @ORM\Column(type="string")
+     * @ORM\Column(type="string", length=5)
      */
     protected $target_language = '';
 
     /**
      * @var string
-     * @ORM\Column(type="string")
+     * @ORM\Column(type="string", length=9)
      */
     protected $status = '';
 

@@ -3,6 +3,7 @@
 namespace Concrete\Package\MdContentTranslator;
 
 use Concrete\Core\Application\Service\UserInterface\Menu;
+use Concrete\Core\Asset\AssetList;
 use Concrete\Core\Database\Connection\Connection;
 use Concrete\Core\Foundation\Service\ProviderList;
 use Concrete\Core\Package\Package;
@@ -15,6 +16,7 @@ use Macareux\ContentTranslator\Entity\TranslateRequestRepository;
 use Macareux\ContentTranslator\Extractor\ExtractorServiceProvider;
 use Macareux\ContentTranslator\Publisher\PublisherServiceProvider;
 use Macareux\ContentTranslator\Translator\Manager;
+use Macareux\ContentTranslator\Utility\UtilityService;
 
 class Controller extends Package
 {
@@ -22,7 +24,7 @@ class Controller extends Package
 
     protected $pkgHandle = 'md_content_translator';
 
-    protected $pkgVersion = '0.0.1';
+    protected $pkgVersion = '0.0.2';
 
     protected $pkgAutoloaderRegistries = [
         'src' => '\Macareux\ContentTranslator',
@@ -54,6 +56,14 @@ class Controller extends Package
         return $package;
     }
 
+    public function upgrade()
+    {
+        parent::upgrade();
+
+        $this->installContentFile('install/singlepages.xml');
+        $this->installContentFile('install/permissions.xml');
+    }
+
     public function uninstall()
     {
         parent::uninstall();
@@ -63,74 +73,70 @@ class Controller extends Package
         $connection->executeQuery('DROP TABLE IF EXISTS MdTranslateContents');
         $connection->executeQuery('DROP TABLE IF EXISTS MdTranslateRequests');
         $connection->executeQuery('DROP TABLE IF EXISTS MdTranslators');
+        $connection->executeQuery('DROP TABLE IF EXISTS MdGlossaryTranslations');
+        $connection->executeQuery('DROP TABLE IF EXISTS MdGlossaryTerms');
     }
 
     public function on_start()
     {
-        /** @var Router $router */
-        $router = $this->app->make(RouterInterface::class);
-        $router->buildGroup()->setPrefix('/ccm/md_content_translator/dialog')
-            ->setNamespace('Concrete\Package\MdContentTranslator\Controller\Dialog')
-            ->routes('dialog.php', $this->getPackageHandle())
-        ;
+        /** @var UtilityService $utility */
+        $utility = $this->app->make(UtilityService::class);
+        if ($utility->canAccessToTranslateInterface()) {
+            /** @var Router $router */
+            $router = $this->app->make(RouterInterface::class);
+            $router->buildGroup()->setPrefix('/ccm/md_content_translator/dialog')
+                ->setNamespace('Concrete\Package\MdContentTranslator\Controller\Dialog')
+                ->routes('dialog.php', $this->getPackageHandle());
 
-        /** @var \Symfony\Component\EventDispatcher\EventDispatcher $director */
-        $director = $this->app->make('director');
-        $director->addListener('on_page_view', function ($event) {
-            /** @var Event $event */
-            $page = $event->getPageObject();
-            /** @var EntityManagerInterface $em */
-            $em = $this->app->make(EntityManagerInterface::class);
-            /** @var TranslateRequestRepository $repository */
-            $repository = $em->getRepository(TranslateRequest::class);
-            $draft = $repository->findDraftByCollection($page);
-            $progress = $repository->findProgressByCollection($page);
-            $class = 'dialog-launch launch-tooltip';
-            if ($draft || $progress) {
-                $class .= ' bg-info text-light';
-            }
+            /** @var \Symfony\Component\EventDispatcher\EventDispatcher $director */
+            $director = $this->app->make('director');
+            $director->addListener('on_page_view', function ($event) {
+                /** @var Event $event */
+                $page = $event->getPageObject();
+                /** @var EntityManagerInterface $em */
+                $em = $this->app->make(EntityManagerInterface::class);
+                /** @var TranslateRequestRepository $repository */
+                $repository = $em->getRepository(TranslateRequest::class);
+                $draft = $repository->findDraftByCollection($page);
+                $progress = $repository->findProgressByCollection($page);
+                $class = 'dialog-launch launch-tooltip';
+                if ($draft || $progress) {
+                    $class .= ' bg-info text-light';
+                }
 
-            /** @var Menu $menu */
-            $menu = $this->app->make('helper/concrete/ui/menu');
-            $menu->addPageHeaderMenuItem('content_translator', $this->getPackageHandle(), [
-                'icon' => 'fas fa-language',
-                'label' => t('Translate'),
-                'position' => 'left',
-                'linkAttributes' => [
-                    'class' => $class,
-                    'dialog-width' => 400,
-                    'dialog-height' => 300,
-                    'dialog-title' => t('Translate'),
-                    'data-bs-toggle' => 'tooltip',
-                    'data-bs-placement' => 'bottom',
-                    'data-bs-original-title' => t('Translate Content'),
-                ],
+                /** @var Menu $menu */
+                $menu = $this->app->make('helper/concrete/ui/menu');
+                $menu->addPageHeaderMenuItem('content_translator', $this->getPackageHandle(), [
+                    'icon' => 'fas fa-language',
+                    'label' => t('Translate'),
+                    'position' => 'left',
+                    'linkAttributes' => [
+                        'class' => $class,
+                        'dialog-width' => 400,
+                        'dialog-height' => 300,
+                        'dialog-title' => t('Translate'),
+                        'data-bs-toggle' => 'tooltip',
+                        'data-bs-placement' => 'bottom',
+                        'data-bs-original-title' => t('Translate Content'),
+                    ],
+                ]);
+            });
+
+            /** @var ProviderList $serviceProviderList */
+            $serviceProviderList = $this->app->make(ProviderList::class);
+            $serviceProviderList->registerProvider(ExtractorServiceProvider::class);
+            $serviceProviderList->registerProvider(PublisherServiceProvider::class);
+
+            $asset = AssetList::getInstance();
+            $asset->register('javascript', 'translator_clipboard', 'js/copybtns.js', [], $this->getPackageEntity());
+            $asset->registerGroup('translator_clipboard', [
+                ['javascript', 'bootstrap'],
+                ['javascript', 'translator_clipboard'],
             ]);
-        });
 
-        /** @var ProviderList $serviceProviderList */
-        $serviceProviderList = $this->app->make(ProviderList::class);
-        $serviceProviderList->registerProvider(ExtractorServiceProvider::class);
-        $serviceProviderList->registerProvider(PublisherServiceProvider::class);
-
-        /** @var Connection $connection */
-        $connection = $this->app->make(Connection::class);
-        $qb = $connection->createQueryBuilder();
-        $r = $qb->select('id')
-            ->from('MdTranslators')
-            ->where(
-                $qb->expr()->or(
-                    $qb->expr()->eq('handle', ':google_translate'),
-                    $qb->expr()->eq('handle', ':deepl'),
-                )
-            )
-            ->andWhere($qb->expr()->eq('active', ':active'))
-            ->setParameter('google_translate', 'google_translate')
-            ->setParameter('deepl', 'deepl')
-            ->setParameter('active', true)
-            ->execute()->fetchOne();
-        if ($r !== false) {
-            $this->registerAutoload();
+            if ($utility->isThirdPartyTranslatorsEnabled()) {
+                $this->registerAutoload();
+            }
         }
     }
 

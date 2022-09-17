@@ -8,5 +8,5 @@ use Macareux\ContentTranslator\Entity\TranslateRequest;
 
 interface ExtractPagePropertyRoutineInterface
 {
-    public function getContent(TranslateRequest $request, Page $page): TranslateContent;
+    public function getContent(TranslateRequest $request, Page $page): ?TranslateContent;
 }

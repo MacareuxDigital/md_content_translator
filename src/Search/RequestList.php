@@ -2,6 +2,7 @@
 
 namespace Macareux\ContentTranslator\Search;
 
+use Concrete\Core\Page\Page;
 use Concrete\Core\Search\ItemList\EntityItemList;
 use Concrete\Core\Search\Pagination\PaginationProviderInterface;
 use Concrete\Core\Support\Facade\Application;
@@ -21,6 +22,44 @@ class RequestList extends EntityItemList implements PaginationProviderInterface
         $app = Application::getFacadeApplication();
 
         return $app->make(EntityManagerInterface::class);
+    }
+
+    public function filterBySourceLanguage(string $lang)
+    {
+        $this->query
+            ->andWhere($this->query->expr()->eq('source_language', ':source_language'))
+            ->setParameter('source_language', $lang);
+    }
+
+    public function filterByTargetLanguage(string $lang)
+    {
+        $this->query
+            ->andWhere($this->query->expr()->eq('target_language', ':target_language'))
+            ->setParameter('target_language', $lang);
+    }
+
+    public function filterByStatus(string $status)
+    {
+        $this->query
+            ->andWhere($this->query->expr()->eq('status', ':status'))
+            ->setParameter('status', $status);
+    }
+
+    public function filterByPage(Page $page)
+    {
+        $this->query
+            ->andWhere($this->query->expr()->eq('cID', ':cID'))
+            ->setParameter('cID', $page->getCollectionID());
+    }
+
+    public function sortByDate()
+    {
+        $this->sortBy('r.created_at');
+    }
+
+    public function sortByDateDescending()
+    {
+        $this->sortBy('r.created_at', 'desc');
     }
 
     public function createQuery()
