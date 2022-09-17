@@ -24,6 +24,7 @@ This package contains built-in machine translators: Google Translate, DeepL
 
 * Create translate requests from pages
 * Translate requests from dashboard
+* Update pages by applying translated requests
 * Apply machine translation to translate requests
 * Glossary for human translators
 
