@@ -20,10 +20,16 @@ This package contains built-in machine translators: Google Translate, DeepL
 * [How to translate contents](https://youtu.be/6Tr-8dI6G8o)
 * [How to enable machine translators](https://youtu.be/90vNHARToUw)
 
+## Features
+
+* Create translate requests from pages
+* Translate requests from dashboard
+* Apply machine translation to translate requests
+* Glossary for human tranlsators
+
 ## ToDo
 
 * Test with Basic Workflow (This package creates a new version of the page and approves it. It should work with built-in workflow system).
-* Dictionary for human translators
 * Support more blocks
 * Permission Keys
   * Can translate page contents (done)
@@ -31,7 +37,7 @@ This package contains built-in machine translators: Google Translate, DeepL
   * Can edit translate request
   * Can publish translate request
   * Can use machine translators
-* Search requests
+* Advanced Search for translate requests
 * More machine translators
 * Merge this package to the core
 
