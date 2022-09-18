@@ -14,6 +14,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Macareux\ContentTranslator\Entity\TranslateRequest;
 use Macareux\ContentTranslator\Entity\TranslateRequestRepository;
 use Macareux\ContentTranslator\Extractor\ExtractorServiceProvider;
+use Macareux\ContentTranslator\Glossary\GlossaryServiceProvider;
 use Macareux\ContentTranslator\Publisher\PublisherServiceProvider;
 use Macareux\ContentTranslator\Translator\Manager;
 use Macareux\ContentTranslator\Utility\UtilityService;
@@ -127,6 +128,7 @@ class Controller extends Package
             $serviceProviderList = $this->app->make(ProviderList::class);
             $serviceProviderList->registerProvider(ExtractorServiceProvider::class);
             $serviceProviderList->registerProvider(PublisherServiceProvider::class);
+            $serviceProviderList->registerProvider(GlossaryServiceProvider::class);
 
             $asset = AssetList::getInstance();
             $asset->register('javascript', 'translator_clipboard', 'js/copybtns.js', [], $this->getPackageEntity());
