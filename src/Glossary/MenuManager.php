@@ -6,11 +6,14 @@ use HtmlObject\Link;
 
 class MenuManager
 {
-    /** @var array */
+    /**
+     * @var array
+     */
     protected $menuItems = [];
 
     /**
      * @param Link $link
+     *
      * @return void
      */
     public function addMenuItem(Link $link)

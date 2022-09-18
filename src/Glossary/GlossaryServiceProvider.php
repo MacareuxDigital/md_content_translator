@@ -3,13 +3,13 @@
 namespace Macareux\ContentTranslator\Glossary;
 
 use Concrete\Core\Foundation\Service\Provider as ServiceProvider;
-use HtmlObject\Link;
 use Concrete\Core\Support\Facade\Url as UrlFacade;
+use HtmlObject\Link;
 
 class GlossaryServiceProvider extends ServiceProvider
 {
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function register()
     {
@@ -25,5 +25,4 @@ class GlossaryServiceProvider extends ServiceProvider
             return $manager;
         });
     }
-
 }
