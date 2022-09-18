@@ -71,7 +71,7 @@ if (isset($request)) {
                         <th class="col-1" scope="row"<?= $rowStyle ?>><?= $content->getLabel() ?></th>
                         <td class="col-5"<?= $rowStyle ?>><?= nl2br(h($contentText)) ?></td>
                         <td class="col-5"<?= $rowStyle ?>>
-                            <?= $form->textarea('translate_' . $content->getId(), $content->getTranslated(), ['readonly' => true]) ?>
+                            <?= $form->textarea('translate_' . $content->getId(), $content->getTranslated(), ['readonly' => true, 'data-edit-translate-target' => 'translate_' . $content->getId()]) ?>
                         </td>
                         <td class="col-1"<?= $rowStyle ?>>
                             <button type="button" class="btn btn-primary"
@@ -87,7 +87,7 @@ if (isset($request)) {
                         <th class="col-1" scope="row"<?= $rowStyle ?>><?= $content->getLabel() ?></th>
                         <td class="col-5"<?= $rowStyle ?>><?= h($contentText) ?></td>
                         <td class="col-5"<?= $rowStyle ?>>
-                            <?= $form->text('translate_' . $content->getId(), $content->getTranslated(), ['readonly' => true]) ?>
+                            <?= $form->text('translate_' . $content->getId(), $content->getTranslated(), ['readonly' => true, 'data-edit-translate-target' => 'translate_' . $content->getId()]) ?>
                         </td>
                         <td class="col-1"<?= $rowStyle ?>>
                             <button type="button" class="btn btn-primary"
@@ -109,7 +109,13 @@ if (isset($request)) {
                         </td>
                         <td class="col-5">
                             <?php foreach ($glossaryTerms as $source => $translated) { ?>
-                                <button type="button" class="btn btn-primary btn-sm copy-text" data-bs-toggle="tooltip" data-bs-title="<?= h('Copied to clipboard!') ?>" data-bs-trigger="manual"><?= h($translated) ?></button>
+                                <button type="button"
+                                        class="btn btn-primary btn-sm copy-text"
+                                        data-edit-translate-target-id="<?= 'translate_' . $content->getId() ?>"
+                                        data-bs-toggle="tooltip"
+                                        data-bs-title="<?= h('Copied to clipboard!') ?>"
+                                        data-bs-trigger="manual"
+                                        data-bs-placement="bottom"><?= h($translated) ?></button>
                             <?php } ?>
                         </td>
                         <td class="col-1"></td>
@@ -145,24 +151,6 @@ if (isset($request)) {
             </div>
         </div>
     </form>
-
-    <script>
-        $('#translator [data-edit-translate]').on('click', function () {
-            let target = $(this).data('edit-translate');
-            $('#' + target).prop('readonly', false);
-            $(this).prop('disabled', true);
-            $('#publish').prop('disabled', true);
-            $('#save').prop('disabled', false);
-        });
-        $('#translator [data-edit-translate-editor]').on('click', function () {
-            let target = $(this).data('edit-translate-editor');
-            $('[data-edit-translate-placeholder=' + target + ']').addClass('d-none');
-            $('[data-edit-translate-target=' + target + ']').removeClass('d-none');
-            $(this).prop('disabled', true);
-            $('#publish').prop('disabled', true);
-            $('#save').prop('disabled', false);
-        });
-    </script>
 
     <div class="modal fade" id="choose-translator" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered" role="document">

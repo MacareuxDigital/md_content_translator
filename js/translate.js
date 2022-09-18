@@ -14,12 +14,20 @@ clipboardButtons.forEach((clipboardButton) => {
                     tooltip.hide();
                 }, 2000);
             });
+        const targetID = clipboardButton.getAttribute('data-edit-translate-target-id');
+        const target = document.querySelector('[data-edit-translate-target=' + targetID + ']');
+        const ckeditor = target.querySelector('.cke_editable');
+        if (ckeditor) {
+            ckeditor.focus();
+        } else {
+            target.focus();
+        }
     });
 });
 
 $('#translator [data-edit-translate]').on('click', function () {
     let target = $(this).data('edit-translate');
-    $('[data-edit-translate-target=' + target + ']').prop('readonly', false);
+    $('#' + target).prop('readonly', false);
     $(this).prop('disabled', true);
     $('#publish').prop('disabled', true);
     $('#save').prop('disabled', false);

@@ -34,7 +34,7 @@ class Detail extends DashboardPageController
             $this->set('translators', $translators);
             $this->set('service', $this->app->make(GlossaryService::class));
 
-            $this->requireAsset('translator_clipboard');
+            $this->requireAsset('content_translator');
         }
     }
 

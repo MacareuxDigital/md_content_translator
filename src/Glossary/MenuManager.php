@@ -18,7 +18,7 @@ class MenuManager
      */
     public function addMenuItem(Link $link)
     {
-        $this->menuItems[] = $link;
+        array_unshift($this->menuItems, $link);
     }
 
     /**

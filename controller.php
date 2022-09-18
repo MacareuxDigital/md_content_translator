@@ -131,10 +131,10 @@ class Controller extends Package
             $serviceProviderList->registerProvider(GlossaryServiceProvider::class);
 
             $asset = AssetList::getInstance();
-            $asset->register('javascript', 'translator_clipboard', 'js/copybtns.js', [], $this->getPackageEntity());
-            $asset->registerGroup('translator_clipboard', [
+            $asset->register('javascript', 'content_translator', 'js/translate.js', [], $this->getPackageEntity());
+            $asset->registerGroup('content_translator', [
                 ['javascript', 'bootstrap'],
-                ['javascript', 'translator_clipboard'],
+                ['javascript', 'content_translator'],
             ]);
 
             if ($utility->isThirdPartyTranslatorsEnabled()) {
