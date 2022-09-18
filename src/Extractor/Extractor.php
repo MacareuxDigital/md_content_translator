@@ -61,21 +61,13 @@ class Extractor
 
         /** @var ExtractPagePropertyRoutineInterface $routine */
         foreach ($this->manager->getRoutinesByCategory('page_property') as $routine) {
-            $content = $routine->getContent($request, $this->page);
-            if ($content) {
-                $request->getContents()->add($content);
-                $this->entityManager->persist($content);
-            }
+            $routine->extractContent($request, $this->page);
         }
 
         foreach ($this->page->getSetCollectionAttributes() as $attribute) {
             /** @var ExtractPageAttributeRoutineInterface $routine */
             foreach ($this->manager->getRoutinesByCategory('page_attribute') as $routine) {
-                $content = $routine->getContent($request, $this->page->getAttributeValueObject($attribute));
-                if ($content) {
-                    $request->getContents()->add($content);
-                    $this->entityManager->persist($content);
-                }
+                $routine->extractContent($request, $this->page->getAttributeValueObject($attribute));
             }
         }
 
@@ -83,11 +75,7 @@ class Extractor
             if ($block->isAliasOfMasterCollection() === false) {
                 /** @var ExtractBlockRoutineInterface $routine */
                 foreach ($this->manager->getRoutinesByCategory('block') as $routine) {
-                    $content = $routine->getContent($request, $block);
-                    if ($content) {
-                        $request->getContents()->add($content);
-                        $this->entityManager->persist($content);
-                    }
+                    $routine->extractContent($request, $block);
                 }
             }
         }

@@ -8,7 +8,9 @@ use Concrete\Core\Permission\Checker;
 
 class UtilityService
 {
-    /** @var Connection */
+    /**
+     * @var Connection
+     */
     protected $connection;
 
     /**

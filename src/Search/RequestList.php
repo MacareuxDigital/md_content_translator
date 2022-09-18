@@ -28,28 +28,32 @@ class RequestList extends EntityItemList implements PaginationProviderInterface
     {
         $this->query
             ->andWhere($this->query->expr()->eq('source_language', ':source_language'))
-            ->setParameter('source_language', $lang);
+            ->setParameter('source_language', $lang)
+        ;
     }
 
     public function filterByTargetLanguage(string $lang)
     {
         $this->query
             ->andWhere($this->query->expr()->eq('target_language', ':target_language'))
-            ->setParameter('target_language', $lang);
+            ->setParameter('target_language', $lang)
+        ;
     }
 
     public function filterByStatus(string $status)
     {
         $this->query
             ->andWhere($this->query->expr()->eq('status', ':status'))
-            ->setParameter('status', $status);
+            ->setParameter('status', $status)
+        ;
     }
 
     public function filterByPage(Page $page)
     {
         $this->query
             ->andWhere($this->query->expr()->eq('cID', ':cID'))
-            ->setParameter('cID', $page->getCollectionID());
+            ->setParameter('cID', $page->getCollectionID())
+        ;
     }
 
     public function sortByDate()

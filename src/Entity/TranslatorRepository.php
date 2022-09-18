@@ -9,7 +9,7 @@ class TranslatorRepository extends EntityRepository
     public function findOneByHandle(string $handle): ?Translator
     {
         return $this->findOneBy([
-            'handle' => $handle
+            'handle' => $handle,
         ]);
     }
 }

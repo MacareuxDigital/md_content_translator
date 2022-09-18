@@ -24,7 +24,7 @@ class Controller extends Package
 
     protected $pkgHandle = 'md_content_translator';
 
-    protected $pkgVersion = '0.0.2';
+    protected $pkgVersion = '0.1.0';
 
     protected $pkgAutoloaderRegistries = [
         'src' => '\Macareux\ContentTranslator',
@@ -86,7 +86,8 @@ class Controller extends Package
             $router = $this->app->make(RouterInterface::class);
             $router->buildGroup()->setPrefix('/ccm/md_content_translator/dialog')
                 ->setNamespace('Concrete\Package\MdContentTranslator\Controller\Dialog')
-                ->routes('dialog.php', $this->getPackageHandle());
+                ->routes('dialog.php', $this->getPackageHandle())
+            ;
 
             /** @var \Symfony\Component\EventDispatcher\EventDispatcher $director */
             $director = $this->app->make('director');

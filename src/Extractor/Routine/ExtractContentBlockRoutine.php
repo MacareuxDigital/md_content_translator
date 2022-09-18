@@ -12,10 +12,8 @@ class ExtractContentBlockRoutine extends AbstractExtractBlockRoutine implements 
 {
     use BlockTrait;
 
-    public function getContent(TranslateRequest $request, Block $block): ?TranslateContent
+    public function extractContent(TranslateRequest $request, Block $block)
     {
-        $content = null;
-
         if ($block->getBlockTypeHandle() === 'content') {
             /** @var Controller $controller */
             $controller = $block->getController();
@@ -27,12 +25,10 @@ class ExtractContentBlockRoutine extends AbstractExtractBlockRoutine implements 
                 $content->setContent($extracted);
                 $content->setSourceIdentifier($this->getBlockIdentifier($block));
                 $content->setSourceType('block_content');
-                $content->setLabel($block->getBlockName() ?: $controller->getBlockTypeName());
+                $content->setLabel($this->getLabel($block, $controller));
                 $content->setType(TranslateContent::TYPE_HTML);
                 $request->getContents()->add($content);
             }
         }
-
-        return $content;
     }
 }

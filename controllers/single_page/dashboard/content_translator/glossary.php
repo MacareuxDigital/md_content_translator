@@ -32,7 +32,7 @@ class Glossary extends DashboardSitePageController
         }
     }
 
-    public function form(int $termID = null)
+    public function form(?int $termID = null)
     {
         $defaultLanguage = $this->getDefaultLanguage();
         $this->set('languages', $this->getLanguages($defaultLanguage));
@@ -123,6 +123,7 @@ class Glossary extends DashboardSitePageController
 
             /**
              * @todo: Clear expensive cache
+             *
              * @see \Macareux\ContentTranslator\Glossary\GlossaryService::getTermsFromContent
              */
             $cache = $this->app->make(ExpensiveCache::class);
@@ -142,7 +143,7 @@ class Glossary extends DashboardSitePageController
             if (strpos($defaultSourceLocale, '_') === false) {
                 $defaultSourceLanguage = $defaultSourceLocale;
             } else {
-                list($defaultSourceLanguage, $defaultSourceCountry) = explode('_', $defaultSourceLocale);
+                [$defaultSourceLanguage, $defaultSourceCountry] = explode('_', $defaultSourceLocale);
             }
         }
 

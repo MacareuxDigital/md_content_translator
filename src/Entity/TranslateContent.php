@@ -29,7 +29,7 @@ class TranslateContent
     protected $id;
 
     /**
-     * @var string
+     * @var string the name of this content to show it on the translate interface
      * @ORM\Column(type="string", nullable=true)
      */
     protected $label;
@@ -42,38 +42,44 @@ class TranslateContent
     protected $request;
 
     /**
-     * @var string
+     * @var string the identifier to find object to translate
      * @ORM\Column(type="string")
      */
     protected $source_identifier = '';
 
     /**
-     * @var string
+     * @var string|null the field name if the given object has multiple fields
+     * @ORM\Column(type="string", nullable=true)
+     */
+    protected $source_subfield;
+
+    /**
+     * @var string the type of object
      * @ORM\Column(type="string")
      */
     protected $source_type = '';
 
     /**
-     * @var string
+     * @var string the original content to translate
      * @ORM\Column(type="text")
      */
     protected $content = '';
 
     /**
-     * @var string|null
+     * @var string|null the translated content
      * @ORM\Column(type="text", nullable=true)
      */
     protected $translated;
 
     /**
-     * @var string
+     * @var string the status of this translatable content
      * @ORM\Column(type="string", length=10)
      */
     protected $status = '';
 
     /**
-     * @var string
-     * @ORM\Column(type="string")
+     * @var string the type of translatable content
+     * @ORM\Column(type="string", length=6)
      */
     protected $type = '';
 
@@ -131,6 +137,22 @@ class TranslateContent
     public function setSourceIdentifier(string $source_identifier): void
     {
         $this->source_identifier = $source_identifier;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getSourceSubfield(): ?string
+    {
+        return $this->source_subfield;
+    }
+
+    /**
+     * @param string|null $source_subfield
+     */
+    public function setSourceSubfield(?string $source_subfield): void
+    {
+        $this->source_subfield = $source_subfield;
     }
 
     /**

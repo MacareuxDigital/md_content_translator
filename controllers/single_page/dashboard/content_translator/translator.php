@@ -48,13 +48,13 @@ class Translator extends DashboardPageController
                 $this->entityManager->persist($translator);
                 $this->entityManager->flush();
                 $this->flash('success', t('Successfully updated.'));
+
                 return $this->buildRedirect($this->action('view'));
-            } else {
+            }
                 $this->flash('error', $this->error->toText());
                 $this->set('translator', $translator);
                 $this->set('pageTitle', t('Edit %s Translator', $translator->getName()));
                 $this->render('/dashboard/content_translator/translator/config', 'md_content_translator');
-            }
         } else {
             return $this->buildRedirect($this->action('view'));
         }

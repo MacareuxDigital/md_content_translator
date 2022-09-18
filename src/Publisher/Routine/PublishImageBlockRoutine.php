@@ -13,14 +13,12 @@ class PublishImageBlockRoutine implements PublishRoutineInterface
     public function publish(Page $page, TranslateContent $content): bool
     {
         if ($content->getSourceType() === 'block_image') {
-            $block = $this->getBlockToEdit($content->getSourceIdentifier(), $page);
+            $identifier = $content->getSourceIdentifier();
+            $block = $this->getBlockToEdit($identifier, $page);
             if ($block) {
-                $translated = explode(PHP_EOL, $content->getTranslated());
-                $data = [
-                    'altText' => $translated[0],
-                ];
-                if (isset($translated[1])) {
-                    $data['title'] = $translated[1];
+                $data = $this->getOriginalBlockRecord($block);
+                foreach ($this->getTranslationsForSameBlock($content) as $relatedContent) {
+                    $data[$relatedContent->getSourceSubfield()] = $relatedContent->getTranslated();
                 }
                 $block->update($data);
 

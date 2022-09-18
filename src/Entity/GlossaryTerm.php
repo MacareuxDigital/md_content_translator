@@ -72,6 +72,7 @@ class GlossaryTerm
 
     /**
      * @param string $language
+     *
      * @return GlossaryTranslation|null
      */
     public function getTranslationByLanguage(string $language): ?GlossaryTranslation

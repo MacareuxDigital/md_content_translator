@@ -50,6 +50,7 @@ class Manager implements ApplicationAwareInterface
             if ($configuration) {
                 $service->loadConfiguration($entity->getConfiguration());
             }
+
             return $service;
         }
 

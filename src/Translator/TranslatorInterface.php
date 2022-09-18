@@ -12,7 +12,7 @@ interface TranslatorInterface
     /**
      * Setup Translate service.
      *
-     * @return ErrorList Return ErrorList object if translator has some issue.
+     * @return ErrorList return ErrorList object if translator has some issue
      */
     public function setupTranslate(TranslateRequest $request): ErrorList;
 
@@ -20,6 +20,7 @@ interface TranslatorInterface
      * Translate contents.
      *
      * @param TranslateRequest $request
+     *
      * @return void
      */
     public function translate(TranslateRequest $request): void;
@@ -28,6 +29,7 @@ interface TranslatorInterface
      * Return error if something failed while translate process.
      *
      * @param TranslateRequest $request
+     *
      * @return ErrorList
      */
     public function finishTranslate(TranslateRequest $request): ErrorList;
@@ -37,6 +39,7 @@ interface TranslatorInterface
      *
      * @param HttpRequest $request
      * @param ErrorList $errorList
+     *
      * @return void
      */
     public function validateConfigurationRequest(HttpRequest $request, ErrorList $errorList): void;
@@ -46,6 +49,7 @@ interface TranslatorInterface
      *
      * @param HttpRequest $request
      * @param Translator $translator
+     *
      * @return void
      */
     public function updateConfiguration(HttpRequest $request, Translator $translator): void;
@@ -54,6 +58,7 @@ interface TranslatorInterface
      * Load configuration from database.
      *
      * @param string $configuration
+     *
      * @return void
      */
     public function loadConfiguration(string $configuration): void;

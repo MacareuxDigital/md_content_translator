@@ -13,10 +13,8 @@ class ExtractTextareaAttributeRoutine extends AbstractExtractPageAttributeRoutin
 {
     use AttributeValueTrait;
 
-    public function getContent(TranslateRequest $request, PageValue $value): ?TranslateContent
+    public function extractContent(TranslateRequest $request, PageValue $value)
     {
-        $content = null;
-
         $typeHandle = $value->getAttributeTypeObject()->getAttributeTypeHandle();
         if ($typeHandle === 'textarea') {
             $key = $value->getAttributeKey();
@@ -40,7 +38,5 @@ class ExtractTextareaAttributeRoutine extends AbstractExtractPageAttributeRoutin
                 }
             }
         }
-
-        return $content;
     }
 }

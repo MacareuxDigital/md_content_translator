@@ -12,7 +12,6 @@ use Macareux\ContentTranslator\Entity\TranslateRequest;
 use Macareux\ContentTranslator\Glossary\GlossaryService;
 use Macareux\ContentTranslator\Publisher\Publisher;
 use Macareux\ContentTranslator\Translator\Manager;
-use Macareux\ContentTranslator\Translator\TranslatorInterface;
 
 class Detail extends DashboardPageController
 {
@@ -165,7 +164,7 @@ class Detail extends DashboardPageController
 
                 return $this->buildRedirect($resolver->resolve([$page]));
             }
-                $this->flash('error', $this->error->toText());
+            $this->flash('error', $this->error->toText());
         }
 
         return $this->buildRedirect($this->action('view', $id));

@@ -27,15 +27,24 @@ class Publisher
     protected $entityManager;
 
     /**
+     * @var RequestCache
+     */
+    protected $cache;
+
+    /**
      * @param TranslateRequest $request
      * @param Manager $manager
      * @param EntityManager $entityManager
      */
-    public function __construct(TranslateRequest $request, Manager $manager, EntityManager $entityManager)
+    public function __construct(TranslateRequest $request, Manager $manager, EntityManager $entityManager, RequestCache $cache)
     {
         $this->request = $request;
         $this->manager = $manager;
         $this->entityManager = $entityManager;
+        $this->cache = $cache;
+        if ($this->cache->isEnabled()) {
+            $this->cache->disable();
+        }
     }
 
     public function publish()

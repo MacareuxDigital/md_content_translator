@@ -139,7 +139,7 @@ if (isset($request)) {
                 }
                 echo $form->submit('save', t('Save'), [
                     'class' => 'btn btn-primary float-end me-2',
-                    'disabled' => 'disabled'
+                    'disabled' => 'disabled',
                 ]);
                 ?>
             </div>

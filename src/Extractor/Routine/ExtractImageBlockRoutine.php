@@ -12,32 +12,39 @@ class ExtractImageBlockRoutine extends AbstractExtractBlockRoutine implements Ex
 {
     use BlockTrait;
 
-    public function getContent(TranslateRequest $request, Block $block): ?TranslateContent
+    public function extractContent(TranslateRequest $request, Block $block)
     {
-        $content = null;
-
         if ($block->getBlockTypeHandle() === 'image') {
             /** @var Controller $controller */
             $controller = $block->getController();
 
-            $extracted = $controller->getAltText();
-            $title = $controller->getTitle();
-            if ($title) {
-                $extracted .= PHP_EOL . $title;
-            }
-            if ($extracted) {
+            $altText = $controller->getAltText();
+            if ($altText) {
                 $content = new TranslateContent();
                 $content->setRequest($request);
                 $content->setStatus(TranslateContent::STATUS_DRAFT);
-                $content->setContent($extracted);
+                $content->setContent($altText);
                 $content->setSourceIdentifier($this->getBlockIdentifier($block));
+                $content->setSourceSubfield('altText');
                 $content->setSourceType('block_image');
-                $content->setLabel($block->getBlockName() ?: $controller->getBlockTypeName());
+                $content->setLabel($this->getLabel($block, $controller, t('Alt Text')));
+                $content->setType(TranslateContent::TYPE_TEXT);
+                $request->getContents()->add($content);
+            }
+
+            $title = $controller->getTitle();
+            if ($title) {
+                $content = new TranslateContent();
+                $content->setRequest($request);
+                $content->setStatus(TranslateContent::STATUS_DRAFT);
+                $content->setContent($title);
+                $content->setSourceIdentifier($this->getBlockIdentifier($block));
+                $content->setSourceSubfield('title');
+                $content->setSourceType('block_image');
+                $content->setLabel($this->getLabel($block, $controller, t('Title')));
                 $content->setType(TranslateContent::TYPE_TEXT);
                 $request->getContents()->add($content);
             }
         }
-
-        return $content;
     }
 }

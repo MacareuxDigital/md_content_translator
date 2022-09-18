@@ -10,9 +10,14 @@ use Macareux\ContentTranslator\Entity\TranslateRequest;
 
 class GlossaryService
 {
-    /** @var GlossaryTranslationRepository */
+    /**
+     * @var GlossaryTranslationRepository
+     */
     protected $repository;
-    /** @var ExpensiveCache */
+
+    /**
+     * @var ExpensiveCache
+     */
     protected $cache;
 
     public function __construct(EntityManagerInterface $entityManager, ExpensiveCache $cache)

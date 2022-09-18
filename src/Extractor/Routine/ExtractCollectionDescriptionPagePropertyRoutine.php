@@ -8,22 +8,19 @@ use Macareux\ContentTranslator\Entity\TranslateRequest;
 
 class ExtractCollectionDescriptionPagePropertyRoutine extends AbstractExtractPagePropertyRoutine implements ExtractPagePropertyRoutineInterface
 {
-    public function getContent(TranslateRequest $request, Page $page): ?TranslateContent
+    public function extractContent(TranslateRequest $request, Page $page)
     {
-        $content = null;
         $text = $page->getCollectionDescription();
         if ($text) {
             $content = new TranslateContent();
             $content->setRequest($request);
             $content->setStatus(TranslateContent::STATUS_DRAFT);
             $content->setContent($text);
-            $content->setSourceIdentifier((string)$page->getCollectionID());
+            $content->setSourceIdentifier((string) $page->getCollectionID());
             $content->setSourceType('collection_description');
             $content->setLabel(t('Page Description'));
             $content->setType(TranslateContent::TYPE_TEXT);
             $request->getContents()->add($content);
         }
-
-        return $content;
     }
 }

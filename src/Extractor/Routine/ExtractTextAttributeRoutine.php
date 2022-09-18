@@ -12,10 +12,8 @@ class ExtractTextAttributeRoutine extends AbstractExtractPageAttributeRoutine im
 {
     use AttributeValueTrait;
 
-    public function getContent(TranslateRequest $request, PageValue $value): ?TranslateContent
+    public function extractContent(TranslateRequest $request, PageValue $value)
     {
-        $content = null;
-
         $typeHandle = $value->getAttributeTypeObject()->getAttributeTypeHandle();
         if ($typeHandle === 'text') {
             /** @var TextValue $typeValue */
@@ -32,7 +30,5 @@ class ExtractTextAttributeRoutine extends AbstractExtractPageAttributeRoutine im
                 $request->getContents()->add($content);
             }
         }
-
-        return $content;
     }
 }

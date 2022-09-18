@@ -40,7 +40,7 @@ class GoogleTranslateTranslator extends AbstractTranslator implements Translator
         $option = [
             'source' => $request->getSourceLanguage(),
             'target' => $request->getTargetLanguage(),
-            'format' => 'html'
+            'format' => 'html',
         ];
 
         try {

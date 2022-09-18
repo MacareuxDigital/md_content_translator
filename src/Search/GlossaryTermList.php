@@ -13,7 +13,9 @@ use Pagerfanta\Doctrine\ORM\QueryAdapter;
 
 class GlossaryTermList extends EntityItemList implements PaginationProviderInterface
 {
-    /** @var string */
+    /**
+     * @var string
+     */
     protected $joinLanguage;
 
     /**
@@ -37,7 +39,8 @@ class GlossaryTermList extends EntityItemList implements PaginationProviderInter
             $query
                 ->leftJoin('g.translations', 't')
                 ->where($this->query->expr()->eq('t.language', ':language'))
-                ->setParameter('language', $this->joinLanguage);
+                ->setParameter('language', $this->joinLanguage)
+            ;
         }
 
         return $query;
