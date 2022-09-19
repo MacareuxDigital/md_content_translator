@@ -59,19 +59,21 @@ class GlossaryService
     /**
      * Get all language codes in the glossary.
      *
-     * @return array
      * @throws \Doctrine\DBAL\Driver\Exception
      * @throws \Doctrine\DBAL\Exception
+     *
+     * @return array
      */
     public function getAvailableLanguages(): array
     {
         $languages = [];
         $qb = $this->connection->createQueryBuilder();
-        $results= $qb->select('language')
+        $results = $qb->select('language')
             ->from('MdGlossaryTranslations')
             ->groupBy('language')
             ->execute()
-            ->fetchAllAssociative();
+            ->fetchAllAssociative()
+        ;
         foreach ($results as $result) {
             $languages[] = $result['language'];
         }

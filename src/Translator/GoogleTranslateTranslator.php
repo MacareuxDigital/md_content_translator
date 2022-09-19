@@ -40,7 +40,7 @@ class GoogleTranslateTranslator extends AbstractTranslator implements Translator
         }
 
         $translationOptions = [
-            'sourceLanguageCode' => $request->getSourceLanguage()
+            'sourceLanguageCode' => $request->getSourceLanguage(),
         ];
         $googleTranslationServiceClient = new TranslationServiceClient(['credentials' => $this->configuration['credentials']]);
         $formattedParent = TranslationServiceClient::locationName(
