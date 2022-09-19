@@ -4,8 +4,9 @@ namespace Macareux\ContentTranslator\Translator;
 
 use Concrete\Core\Error\ErrorList\ErrorList;
 use Concrete\Core\Http\Request;
-use Google\Cloud\Core\Exception\ServiceException;
-use Google\Cloud\Translate\V2\TranslateClient;
+use Google\ApiCore\ApiException;
+use Google\Cloud\Translate\V3\TranslateTextGlossaryConfig;
+use Google\Cloud\Translate\V3\TranslationServiceClient;
 use Macareux\ContentTranslator\Entity\TranslateContent;
 use Macareux\ContentTranslator\Entity\TranslateRequest;
 use Macareux\ContentTranslator\Entity\Translator;
@@ -37,27 +38,67 @@ class GoogleTranslateTranslator extends AbstractTranslator implements Translator
                 }
             }
         }
-        $option = [
-            'source' => $request->getSourceLanguage(),
-            'target' => $request->getTargetLanguage(),
-            'format' => 'html',
+
+        $translationOptions = [
+            'sourceLanguageCode' => $request->getSourceLanguage()
         ];
+        $googleTranslationServiceClient = new TranslationServiceClient(['credentials' => $this->configuration['credentials']]);
+        $formattedParent = TranslationServiceClient::locationName(
+            $this->configuration['credentials']['project_id'],
+            'us-central1'
+        );
+        if (isset($this->configuration['glossaryId'])) {
+            $glossaryPath = TranslationServiceClient::glossaryName(
+                $this->configuration['credentials']['project_id'],
+                'us-central1',
+                $this->configuration['glossaryId']
+            );
+            $glossaryConfig = new TranslateTextGlossaryConfig();
+            $glossaryConfig->setGlossary($glossaryPath);
+            $translationOptions['glossaryConfig'] = $glossaryConfig;
+        }
 
         try {
-            $client = new TranslateClient(['keyFile' => $this->configuration]);
             if ($htmlStrings) {
-                foreach ($client->translateBatch($htmlStrings, $option) as $index => $result) {
-                    $this->setTranslatedContent($result['text'], $htmlContents[$index]);
+                $translationOptions['mineType'] = 'text/html';
+                $response = $googleTranslationServiceClient->translateText(
+                    $htmlStrings,
+                    $request->getTargetLanguage(),
+                    $formattedParent,
+                    $translationOptions
+                );
+                if (isset($glossaryConfig)) {
+                    foreach ($response->getGlossaryTranslations() as $index => $translation) {
+                        $this->setTranslatedContent($translation->getTranslatedText(), $htmlContents[$index]);
+                    }
+                } else {
+                    foreach ($response->getTranslations() as $index => $translation) {
+                        $this->setTranslatedContent($translation->getTranslatedText(), $htmlContents[$index]);
+                    }
                 }
             }
             if ($textStrings) {
-                foreach ($client->translateBatch($textStrings, $option) as $index => $result) {
-                    $this->setTranslatedContent($result['text'], $textContents[$index]);
+                $translationOptions['mineType'] = 'text/plain';
+                $response = $googleTranslationServiceClient->translateText(
+                    $textStrings,
+                    $request->getTargetLanguage(),
+                    $formattedParent,
+                    $translationOptions
+                );
+                if (isset($glossaryConfig)) {
+                    foreach ($response->getGlossaryTranslations() as $index => $translation) {
+                        $this->setTranslatedContent($translation->getTranslatedText(), $textContents[$index]);
+                    }
+                } else {
+                    foreach ($response->getTranslations() as $index => $translation) {
+                        $this->setTranslatedContent($translation->getTranslatedText(), $textContents[$index]);
+                    }
                 }
             }
-        } catch (ServiceException $exception) {
-            $error = json_decode($exception->getMessage());
-            $this->errorList->add($error->error->message);
+        } catch (ApiException $apiException) {
+            $this->errorList->add($apiException->getBasicMessage());
+        } finally {
+            $googleTranslationServiceClient->close();
         }
     }
 
@@ -69,10 +110,13 @@ class GoogleTranslateTranslator extends AbstractTranslator implements Translator
         $file = $request->files->get('config_json');
         if ($file instanceof UploadedFile) {
             $config = json_decode($file->getContent(), true);
+            $googleTranslationServiceClient = new TranslationServiceClient(['credentials' => $config]);
+            $formattedParent = TranslationServiceClient::locationName($config['project_id'], 'global');
+
             try {
-                new TranslateClient(['keyFile' => $config]);
-            } catch (\Exception $exception) {
-                $errorList->add($exception->getMessage());
+                $googleTranslationServiceClient->translateText(['Hello, Workd!'], 'fr', $formattedParent);
+            } catch (ApiException $exception) {
+                $errorList->add($exception->getBasicMessage());
             }
         } elseif (!$uploaded) {
             $errorList->add(t('Please upload config.json file.'));
@@ -81,9 +125,20 @@ class GoogleTranslateTranslator extends AbstractTranslator implements Translator
 
     public function updateConfiguration(Request $request, Translator $translator): void
     {
+        $config = $this->configuration ?: [];
+
         $file = $request->files->get('config_json');
         if ($file instanceof UploadedFile) {
-            $translator->setConfiguration($file->getContent());
+            $config['credentials'] = json_decode($file->getContent(), true);
+        }
+
+        $bucket = $request->request->get('glossaryId');
+        if ($bucket) {
+            $config['glossaryId'] = $bucket;
+        }
+
+        if ($config) {
+            $translator->setConfiguration(json_encode($config));
             $this->entityManager->persist($translator);
             $this->entityManager->flush();
         }

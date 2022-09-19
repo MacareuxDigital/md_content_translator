@@ -3,6 +3,7 @@
 namespace Macareux\ContentTranslator\Glossary;
 
 use Concrete\Core\Cache\Level\ExpensiveCache;
+use Concrete\Core\Database\Connection\Connection;
 use Doctrine\ORM\EntityManagerInterface;
 use Macareux\ContentTranslator\Entity\GlossaryTranslation;
 use Macareux\ContentTranslator\Entity\GlossaryTranslationRepository;
@@ -10,6 +11,11 @@ use Macareux\ContentTranslator\Entity\TranslateRequest;
 
 class GlossaryService
 {
+    /**
+     * @var Connection
+     */
+    protected $connection;
+
     /**
      * @var GlossaryTranslationRepository
      */
@@ -20,8 +26,9 @@ class GlossaryService
      */
     protected $cache;
 
-    public function __construct(EntityManagerInterface $entityManager, ExpensiveCache $cache)
+    public function __construct(Connection $connection, EntityManagerInterface $entityManager, ExpensiveCache $cache)
     {
+        $this->connection = $connection;
         $this->repository = $entityManager->getRepository(GlossaryTranslation::class);
         $this->cache = $cache;
     }
@@ -47,5 +54,28 @@ class GlossaryService
         }
 
         return $terms;
+    }
+
+    /**
+     * Get all language codes in the glossary.
+     *
+     * @return array
+     * @throws \Doctrine\DBAL\Driver\Exception
+     * @throws \Doctrine\DBAL\Exception
+     */
+    public function getAvailableLanguages(): array
+    {
+        $languages = [];
+        $qb = $this->connection->createQueryBuilder();
+        $results= $qb->select('language')
+            ->from('MdGlossaryTranslations')
+            ->groupBy('language')
+            ->execute()
+            ->fetchAllAssociative();
+        foreach ($results as $result) {
+            $languages[] = $result['language'];
+        }
+
+        return $languages;
     }
 }
